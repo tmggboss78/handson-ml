@@ -1,0 +1,202 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled0.ipynb",
+      "version": "0.3.2",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "accelerator": "GPU"
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/tmggboss78/handson-ml/blob/master/%EC%BC%80%EB%9D%BC%EC%8A%A4%20%EA%B3%A0%EA%B8%89%20api\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "metadata": {
+        "id": "mMtn9PdDNabo",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        "from tensorflow.python.keras.datasets import mnist\n",
+        "from tensorflow.python.keras.utils import to_categorical\n",
+        "from tensorflow.python.keras.callbacks import TensorBoard\n",
+        "from tensorflow.python.keras.layers import Input, Dense\n",
+        "from tensorflow.python.keras.models import Model\n",
+        "\n",
+        "(x_train, y_train), (x_test, y_test) = mnist.load_data()\n",
+        "x_train = x_train.reshape(60000, 784)\n",
+        "x_train = x_train/255.\n",
+        "x_test = x_test.reshape(10000, 784)\n",
+        "x_test = x_test/255.\n",
+        "y_train = to_categorical(y_train, 10)\n",
+        "y_test = to_categorical(y_test, 10)\n",
+        "tsb = TensorBoard(log_dir=' ./logs')"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "id": "w4Xki2-vOYx3",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 93
+        },
+        "outputId": "42457a60-4d8f-4042-ffde-5a56ff220190"
+      },
+      "cell_type": "code",
+      "source": [
+        "input = Input(shape=(784, ))\n",
+        "middle = Dense(units=64, activation='relu')(input)\n",
+        "output = Dense(units=10, activation='softmax')(middle)\n",
+        "model = Model(inputs=[input], outputs=[output])"
+      ],
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/tensorflow/python/ops/resource_variable_ops.py:435: colocate_with (from tensorflow.python.framework.ops) is deprecated and will be removed in a future version.\n",
+            "Instructions for updating:\n",
+            "Colocations handled automatically by placer.\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "id": "Fjxg0UR8O7Ix",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        "model.compile(\n",
+        "    optimizer='adam',\n",
+        "    loss='categorical_crossentropy',\n",
+        "    metrics=['accuracy']\n",
+        ")"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "id": "w27ZSHhKPUKQ",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 877
+        },
+        "outputId": "51de7fa8-9f96-4a40-bb3f-124a7512f83e"
+      },
+      "cell_type": "code",
+      "source": [
+        "model.fit(\n",
+        "    x_train,\n",
+        "    y_train,\n",
+        "    batch_size=32,\n",
+        "    epochs=20,\n",
+        "    callbacks=[tsb],\n",
+        "    validation_split=0.2\n",
+        ")"
+      ],
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Train on 48000 samples, validate on 12000 samples\n",
+            "WARNING:tensorflow:From /usr/local/lib/python3.6/dist-packages/tensorflow/python/ops/math_ops.py:3066: to_int32 (from tensorflow.python.ops.math_ops) is deprecated and will be removed in a future version.\n",
+            "Instructions for updating:\n",
+            "Use tf.cast instead.\n",
+            "Epoch 1/20\n",
+            "48000/48000 [==============================] - 6s 121us/sample - loss: 0.3387 - acc: 0.9051 - val_loss: 0.1981 - val_acc: 0.9451\n",
+            "Epoch 2/20\n",
+            "48000/48000 [==============================] - 5s 111us/sample - loss: 0.1685 - acc: 0.9512 - val_loss: 0.1456 - val_acc: 0.9578\n",
+            "Epoch 3/20\n",
+            "48000/48000 [==============================] - 5s 110us/sample - loss: 0.1199 - acc: 0.9647 - val_loss: 0.1272 - val_acc: 0.9638\n",
+            "Epoch 4/20\n",
+            "48000/48000 [==============================] - 5s 110us/sample - loss: 0.0933 - acc: 0.9722 - val_loss: 0.1118 - val_acc: 0.9663\n",
+            "Epoch 5/20\n",
+            "48000/48000 [==============================] - 5s 109us/sample - loss: 0.0745 - acc: 0.9773 - val_loss: 0.1002 - val_acc: 0.9703\n",
+            "Epoch 6/20\n",
+            "48000/48000 [==============================] - 5s 109us/sample - loss: 0.0624 - acc: 0.9809 - val_loss: 0.0987 - val_acc: 0.9703\n",
+            "Epoch 7/20\n",
+            "48000/48000 [==============================] - 5s 109us/sample - loss: 0.0511 - acc: 0.9840 - val_loss: 0.1045 - val_acc: 0.9680\n",
+            "Epoch 8/20\n",
+            "48000/48000 [==============================] - 5s 109us/sample - loss: 0.0441 - acc: 0.9868 - val_loss: 0.1036 - val_acc: 0.9699\n",
+            "Epoch 9/20\n",
+            "48000/48000 [==============================] - 5s 109us/sample - loss: 0.0381 - acc: 0.9881 - val_loss: 0.0981 - val_acc: 0.9707\n",
+            "Epoch 10/20\n",
+            "48000/48000 [==============================] - 5s 109us/sample - loss: 0.0330 - acc: 0.9902 - val_loss: 0.1062 - val_acc: 0.9695\n",
+            "Epoch 11/20\n",
+            "48000/48000 [==============================] - 5s 114us/sample - loss: 0.0272 - acc: 0.9918 - val_loss: 0.1144 - val_acc: 0.9700\n",
+            "Epoch 12/20\n",
+            "48000/48000 [==============================] - 6s 122us/sample - loss: 0.0246 - acc: 0.9926 - val_loss: 0.1018 - val_acc: 0.9720\n",
+            "Epoch 13/20\n",
+            "48000/48000 [==============================] - 5s 114us/sample - loss: 0.0199 - acc: 0.9943 - val_loss: 0.1176 - val_acc: 0.9693\n",
+            "Epoch 14/20\n",
+            "48000/48000 [==============================] - 5s 111us/sample - loss: 0.0187 - acc: 0.9946 - val_loss: 0.1103 - val_acc: 0.9729\n",
+            "Epoch 15/20\n",
+            "48000/48000 [==============================] - 5s 109us/sample - loss: 0.0164 - acc: 0.9951 - val_loss: 0.1151 - val_acc: 0.9715\n",
+            "Epoch 16/20\n",
+            "48000/48000 [==============================] - 5s 110us/sample - loss: 0.0145 - acc: 0.9958 - val_loss: 0.1178 - val_acc: 0.9707\n",
+            "Epoch 17/20\n",
+            "48000/48000 [==============================] - 5s 110us/sample - loss: 0.0124 - acc: 0.9961 - val_loss: 0.1192 - val_acc: 0.9723\n",
+            "Epoch 18/20\n",
+            "48000/48000 [==============================] - 5s 110us/sample - loss: 0.0109 - acc: 0.9971 - val_loss: 0.1266 - val_acc: 0.9709\n",
+            "Epoch 19/20\n",
+            "48000/48000 [==============================] - 6s 119us/sample - loss: 0.0119 - acc: 0.9964 - val_loss: 0.1210 - val_acc: 0.9707\n",
+            "Epoch 20/20\n",
+            "48000/48000 [==============================] - 6s 125us/sample - loss: 0.0084 - acc: 0.9976 - val_loss: 0.1224 - val_acc: 0.9735\n"
+          ],
+          "name": "stdout"
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "<tensorflow.python.keras.callbacks.History at 0x7fbef9fd0f60>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "id": "PIqOusY7P042",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        ""
+      ],
+      "execution_count": 0,
+      "outputs": []
+    }
+  ]
+}
