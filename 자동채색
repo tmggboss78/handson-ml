@@ -5,7 +5,8 @@
     "colab": {
       "name": "Untitled1.ipynb",
       "version": "0.3.2",
-      "provenance": []
+      "provenance": [],
+      "include_colab_link": true
     },
     "kernelspec": {
       "name": "python3",
@@ -13,6 +14,16 @@
     }
   },
   "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/tmggboss78/handson-ml/blob/master/%EC%9E%90%EB%8F%99%EC%B1%84%EC%83%89\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
     {
       "metadata": {
         "id": "IFnjZIYNFODN",
@@ -42,31 +53,15 @@
       "metadata": {
         "id": "MuceCzh0FW1r",
         "colab_type": "code",
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 131
-        },
-        "outputId": "69339d0f-db38-4f23-d3fe-67538f015527"
+        "colab": {}
       },
       "cell_type": "code",
       "source": [
         "from google.colab import drive\n",
         "drive.mount('/gdrive', force_remount=True)\n"
       ],
-      "execution_count": 3,
-      "outputs": [
-        {
-          "output_type": "stream",
-          "text": [
-            "Go to this URL in a browser: https://accounts.google.com/o/oauth2/auth?client_id=947318989803-6bn6qk8qdgf4n4g3pfee6491hc0brc4i.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdocs.test%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.photos.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fpeopleapi.readonly&response_type=code\n",
-            "\n",
-            "Enter your authorization code:\n",
-            "··········\n",
-            "Mounted at /gdrive\n"
-          ],
-          "name": "stdout"
-        }
-      ]
+      "execution_count": 0,
+      "outputs": []
     },
     {
       "metadata": {
@@ -130,11 +125,7 @@
       "metadata": {
         "id": "quJEiUkSFtFB",
         "colab_type": "code",
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 447
-        },
-        "outputId": "6d02e5b5-106a-47f3-8cf4-7865643e0f93"
+        "colab": {}
       },
       "cell_type": "code",
       "source": [
@@ -219,38 +210,8 @@
         "autoencoder.compile(optimizer='adam', loss='mse')\n",
         "autoencoder.summary()"
       ],
-      "execution_count": 28,
-      "outputs": [
-        {
-          "output_type": "stream",
-          "text": [
-            "_________________________________________________________________\n",
-            "Layer (type)                 Output Shape              Param #   \n",
-            "=================================================================\n",
-            "conv2d_5 (Conv2D)            (None, 224, 224, 32)      320       \n",
-            "_________________________________________________________________\n",
-            "conv2d_6 (Conv2D)            (None, 112, 112, 64)      18496     \n",
-            "_________________________________________________________________\n",
-            "conv2d_7 (Conv2D)            (None, 56, 56, 128)       73856     \n",
-            "_________________________________________________________________\n",
-            "conv2d_8 (Conv2D)            (None, 28, 28, 256)       295168    \n",
-            "_________________________________________________________________\n",
-            "conv2d_transpose_3 (Conv2DTr (None, 56, 56, 128)       295040    \n",
-            "_________________________________________________________________\n",
-            "conv2d_transpose_4 (Conv2DTr (None, 112, 112, 64)      73792     \n",
-            "_________________________________________________________________\n",
-            "conv2d_transpose_5 (Conv2DTr (None, 224, 224, 32)      18464     \n",
-            "_________________________________________________________________\n",
-            "conv2d_9 (Conv2D)            (None, 224, 224, 2)       66        \n",
-            "=================================================================\n",
-            "Total params: 775,202\n",
-            "Trainable params: 775,202\n",
-            "Non-trainable params: 0\n",
-            "_________________________________________________________________\n"
-          ],
-          "name": "stdout"
-        }
-      ]
+      "execution_count": 0,
+      "outputs": []
     },
     {
       "metadata": {
@@ -299,11 +260,7 @@
       "metadata": {
         "id": "4VwSml-DIyZ4",
         "colab_type": "code",
-        "colab": {
-          "base_uri": "https://localhost:8080/",
-          "height": 407
-        },
-        "outputId": "916c643d-9938-44fb-d114-e87a29780b4e"
+        "colab": {}
       },
       "cell_type": "code",
       "source": [
@@ -317,23 +274,8 @@
         "    validation_steps=val_steps\n",
         ")"
       ],
-      "execution_count": 53,
-      "outputs": [
-        {
-          "output_type": "error",
-          "ename": "ValueError",
-          "evalue": "ignored",
-          "traceback": [
-            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
-            "\u001b[0;31mValueError\u001b[0m                                Traceback (most recent call last)",
-            "\u001b[0;32m<ipython-input-53-79f983427b67>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      6\u001b[0m     \u001b[0mepochs\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mepochs\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      7\u001b[0m     \u001b[0mvalidation_data\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mval_gen\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 8\u001b[0;31m     \u001b[0mvalidation_steps\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mval_steps\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      9\u001b[0m )\n",
-            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/training.py\u001b[0m in \u001b[0;36mfit_generator\u001b[0;34m(self, generator, steps_per_epoch, epochs, verbose, callbacks, validation_data, validation_steps, class_weight, max_queue_size, workers, use_multiprocessing, shuffle, initial_epoch)\u001b[0m\n\u001b[1;32m   1424\u001b[0m         \u001b[0muse_multiprocessing\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0muse_multiprocessing\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1425\u001b[0m         \u001b[0mshuffle\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mshuffle\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1426\u001b[0;31m         initial_epoch=initial_epoch)\n\u001b[0m\u001b[1;32m   1427\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1428\u001b[0m   def evaluate_generator(self,\n",
-            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/training_generator.py\u001b[0m in \u001b[0;36mmodel_iteration\u001b[0;34m(model, data, steps_per_epoch, epochs, verbose, callbacks, validation_data, validation_steps, class_weight, max_queue_size, workers, use_multiprocessing, shuffle, initial_epoch, mode, batch_size, **kwargs)\u001b[0m\n\u001b[1;32m    120\u001b[0m   _validate_arguments(is_sequence, use_multiprocessing, workers,\n\u001b[1;32m    121\u001b[0m                       \u001b[0msteps_per_epoch\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mvalidation_data\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mvalidation_steps\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mmode\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 122\u001b[0;31m                       kwargs)\n\u001b[0m\u001b[1;32m    123\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    124\u001b[0m   batch_function = _make_execution_function(\n",
-            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/training_generator.py\u001b[0m in \u001b[0;36m_validate_arguments\u001b[0;34m(is_sequence, use_multiprocessing, workers, steps_per_epoch, validation_data, validation_steps, mode, kwargs)\u001b[0m\n\u001b[1;32m    327\u001b[0m   if (val_gen and not isinstance(validation_data, data_utils.Sequence) and\n\u001b[1;32m    328\u001b[0m       not validation_steps):\n\u001b[0;32m--> 329\u001b[0;31m     \u001b[0;32mraise\u001b[0m \u001b[0mValueError\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'Please specify the `validation_steps` argument.'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    330\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    331\u001b[0m   \u001b[0;32mif\u001b[0m \u001b[0many\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mk\u001b[0m \u001b[0;34m!=\u001b[0m \u001b[0;34m'steps'\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mk\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
-            "\u001b[0;31mValueError\u001b[0m: Please specify the `validation_steps` argument."
-          ]
-        }
-      ]
+      "execution_count": 0,
+      "outputs": []
     }
   ]
 }
