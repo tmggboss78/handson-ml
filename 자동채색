@@ -1,0 +1,339 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled1.ipynb",
+      "version": "0.3.2",
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    }
+  },
+  "cells": [
+    {
+      "metadata": {
+        "id": "IFnjZIYNFODN",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import glob\n",
+        "import math\n",
+        "import random\n",
+        "\n",
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "\n",
+        "from tensorflow.python import keras\n",
+        "from tensorflow.python.keras import backend as K\n",
+        "from tensorflow.python.keras.models import Model, Sequential\n",
+        "from tensorflow.python.keras.layers import Conv2D, Dense, Input, MaxPooling2D, UpSampling2D, Lambda\n",
+        "from tensorflow.python.keras.preprocessing.image import load_img, img_to_array, array_to_img, ImageDataGenerator"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "id": "MuceCzh0FW1r",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 131
+        },
+        "outputId": "69339d0f-db38-4f23-d3fe-67538f015527"
+      },
+      "cell_type": "code",
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/gdrive', force_remount=True)\n"
+      ],
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Go to this URL in a browser: https://accounts.google.com/o/oauth2/auth?client_id=947318989803-6bn6qk8qdgf4n4g3pfee6491hc0brc4i.apps.googleusercontent.com&redirect_uri=urn%3Aietf%3Awg%3Aoauth%3A2.0%3Aoob&scope=email%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdocs.test%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fdrive.photos.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fpeopleapi.readonly&response_type=code\n",
+            "\n",
+            "Enter your authorization code:\n",
+            "··········\n",
+            "Mounted at /gdrive\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "id": "FnVsLAi6FgsA",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        "data_path = '/gdrive/My drive/img/colorize'\n",
+        "data_lists = glob.glob(os.path.join(data_path, '*.jpg'))\n",
+        "\n",
+        "val_n_sample = math.floor(len(data_lists)*0.1)\n",
+        "test_n_sample = math.floor(len(data_lists)*0.1)\n",
+        "train_n_sample = len(data_lists) - val_n_sample - test_n_sample\n",
+        "\n",
+        "val_lists = data_lists[:val_n_sample]\n",
+        "test_lists = data_lists[val_n_sample:val_n_sample + test_n_sample]\n",
+        "train_lists = data_lists[val_n_sample + test_n_sample:train_n_sample + val_n_sample + test_n_sample]"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "id": "vL6Or9RxFr7N",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        "import cv2\n",
+        "\n",
+        "\n",
+        "img_size = 224\n",
+        "def rgb2lab(rgb):\n",
+        "    assert rgb.dtype == 'uint8'\n",
+        "    return cv2.cvtColor(rgb, cv2.COLOR_RGB2Lab)\n",
+        "\n",
+        "def lab2rgb(lab):\n",
+        "    assert lab.dtype == 'uint8'\n",
+        "    return cv2.cvtColor(lab, cv2.COLOR_Lab2RGB)\n",
+        "\n",
+        "def get_lab_from_data_list(data_list):\n",
+        "    x_lab = []\n",
+        "    for f in data_list:\n",
+        "        rgb = img_to_array(\n",
+        "            load_img(\n",
+        "                f, \n",
+        "                target_size=(img_size, img_size)\n",
+        "            )\n",
+        "        ).astype(np.uint8)\n",
+        "        lab = rgb2lab(rgb)\n",
+        "        x_lab.append(lab)\n",
+        "    return np.stack(x_lab)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "id": "quJEiUkSFtFB",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 447
+        },
+        "outputId": "6d02e5b5-106a-47f3-8cf4-7865643e0f93"
+      },
+      "cell_type": "code",
+      "source": [
+        "from tensorflow.python.keras.layers import Conv2DTranspose\n",
+        "\n",
+        "\n",
+        "autoencoder = Sequential()\n",
+        "# Encoder\n",
+        "autoencoder.add(\n",
+        "    Conv2D(\n",
+        "        32, \n",
+        "        (3, 3), \n",
+        "        (1, 1), \n",
+        "        activation='relu', \n",
+        "        padding='same', \n",
+        "        input_shape=(224, 224, 1)\n",
+        "    )\n",
+        ")\n",
+        "autoencoder.add(\n",
+        "    Conv2D(\n",
+        "        64,\n",
+        "        (3, 3),\n",
+        "        (2, 2),\n",
+        "        activation='relu',\n",
+        "        padding='same'\n",
+        "    )\n",
+        ")\n",
+        "autoencoder.add(\n",
+        "    Conv2D(\n",
+        "        128,\n",
+        "        (3, 3), \n",
+        "        (2, 2), \n",
+        "        activation='relu', \n",
+        "        padding='same'\n",
+        "    )\n",
+        ")\n",
+        "autoencoder.add(\n",
+        "    Conv2D(\n",
+        "        256, \n",
+        "        (3, 3), \n",
+        "        (2, 2), \n",
+        "        activation='relu', \n",
+        "        padding='same')\n",
+        ")\n",
+        "# Decoder\n",
+        "autoencoder.add(\n",
+        "    Conv2DTranspose(\n",
+        "        128, \n",
+        "        (3, 3), \n",
+        "        (2, 2), \n",
+        "        activation='relu', \n",
+        "        padding='same'\n",
+        "    )\n",
+        ")\n",
+        "autoencoder.add(\n",
+        "    Conv2DTranspose(\n",
+        "        64,\n",
+        "        (3, 3), \n",
+        "        (2, 2), \n",
+        "        activation='relu',\n",
+        "        padding='same'\n",
+        "    )\n",
+        ")\n",
+        "autoencoder.add(\n",
+        "    Conv2DTranspose(\n",
+        "        32,\n",
+        "        (3, 3), \n",
+        "        (2, 2), \n",
+        "        activation='relu', \n",
+        "        padding='same'\n",
+        "    )\n",
+        ")\n",
+        "autoencoder.add(\n",
+        "    Conv2D(\n",
+        "        2, \n",
+        "        (1, 1), \n",
+        "        (1, 1), \n",
+        "        activation='relu', \n",
+        "        padding='same'\n",
+        "    )\n",
+        ")\n",
+        "autoencoder.compile(optimizer='adam', loss='mse')\n",
+        "autoencoder.summary()"
+      ],
+      "execution_count": 28,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "_________________________________________________________________\n",
+            "Layer (type)                 Output Shape              Param #   \n",
+            "=================================================================\n",
+            "conv2d_5 (Conv2D)            (None, 224, 224, 32)      320       \n",
+            "_________________________________________________________________\n",
+            "conv2d_6 (Conv2D)            (None, 112, 112, 64)      18496     \n",
+            "_________________________________________________________________\n",
+            "conv2d_7 (Conv2D)            (None, 56, 56, 128)       73856     \n",
+            "_________________________________________________________________\n",
+            "conv2d_8 (Conv2D)            (None, 28, 28, 256)       295168    \n",
+            "_________________________________________________________________\n",
+            "conv2d_transpose_3 (Conv2DTr (None, 56, 56, 128)       295040    \n",
+            "_________________________________________________________________\n",
+            "conv2d_transpose_4 (Conv2DTr (None, 112, 112, 64)      73792     \n",
+            "_________________________________________________________________\n",
+            "conv2d_transpose_5 (Conv2DTr (None, 224, 224, 32)      18464     \n",
+            "_________________________________________________________________\n",
+            "conv2d_9 (Conv2D)            (None, 224, 224, 2)       66        \n",
+            "=================================================================\n",
+            "Total params: 775,202\n",
+            "Trainable params: 775,202\n",
+            "Non-trainable params: 0\n",
+            "_________________________________________________________________\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "metadata": {
+        "id": "rNpJ2uqeFwqb",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        "def generator_with_preprocessing(data_list, batch_size, shuffle=False):\n",
+        "    while True:\n",
+        "        if shuffle:\n",
+        "            np.random.shuffle(data_list)\n",
+        "        for i in range(0, len(data_list), batch_size):\n",
+        "            batch_list = data_list[i:i + batch_size]\n",
+        "            batch_lab = get_lab_from_data_list(batch_list)\n",
+        "            batch_l = batch_lab[:, :, :, 0:1]\n",
+        "            batch_ab = batch_lab[:, :, :, 1:]\n",
+        "            yield (batch_l, batch_ab)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "id": "l6H8CT0WF1Sa",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "cell_type": "code",
+      "source": [
+        "batch_size = 30\n",
+        "\n",
+        "train_gen = generator_with_preprocessing(train_lists, batch_size, shuffle=True)\n",
+        "val_gen = generator_with_preprocessing(val_lists, batch_size)\n",
+        "test_gen = generator_with_preprocessing(test_lists, batch_size)\n",
+        "\n",
+        "train_steps = math.ceil(len(train_lists)/batch_size)\n",
+        "val_steps = math.ceil(len(val_lists)/batch_size)\n",
+        "test_steps = math.ceil(len(test_lists)/batch_size)"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "metadata": {
+        "id": "4VwSml-DIyZ4",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 407
+        },
+        "outputId": "916c643d-9938-44fb-d114-e87a29780b4e"
+      },
+      "cell_type": "code",
+      "source": [
+        "epochs= 150\n",
+        "    \n",
+        "autoencoder.fit_generator(\n",
+        "    generator=train_gen,\n",
+        "    steps_per_epoch=train_steps,\n",
+        "    epochs=epochs,\n",
+        "    validation_data=val_gen,\n",
+        "    validation_steps=val_steps\n",
+        ")"
+      ],
+      "execution_count": 53,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "ValueError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mValueError\u001b[0m                                Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-53-79f983427b67>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      6\u001b[0m     \u001b[0mepochs\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mepochs\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      7\u001b[0m     \u001b[0mvalidation_data\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mval_gen\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 8\u001b[0;31m     \u001b[0mvalidation_steps\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mval_steps\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      9\u001b[0m )\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/training.py\u001b[0m in \u001b[0;36mfit_generator\u001b[0;34m(self, generator, steps_per_epoch, epochs, verbose, callbacks, validation_data, validation_steps, class_weight, max_queue_size, workers, use_multiprocessing, shuffle, initial_epoch)\u001b[0m\n\u001b[1;32m   1424\u001b[0m         \u001b[0muse_multiprocessing\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0muse_multiprocessing\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1425\u001b[0m         \u001b[0mshuffle\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mshuffle\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 1426\u001b[0;31m         initial_epoch=initial_epoch)\n\u001b[0m\u001b[1;32m   1427\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1428\u001b[0m   def evaluate_generator(self,\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/training_generator.py\u001b[0m in \u001b[0;36mmodel_iteration\u001b[0;34m(model, data, steps_per_epoch, epochs, verbose, callbacks, validation_data, validation_steps, class_weight, max_queue_size, workers, use_multiprocessing, shuffle, initial_epoch, mode, batch_size, **kwargs)\u001b[0m\n\u001b[1;32m    120\u001b[0m   _validate_arguments(is_sequence, use_multiprocessing, workers,\n\u001b[1;32m    121\u001b[0m                       \u001b[0msteps_per_epoch\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mvalidation_data\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mvalidation_steps\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mmode\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 122\u001b[0;31m                       kwargs)\n\u001b[0m\u001b[1;32m    123\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    124\u001b[0m   batch_function = _make_execution_function(\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/training_generator.py\u001b[0m in \u001b[0;36m_validate_arguments\u001b[0;34m(is_sequence, use_multiprocessing, workers, steps_per_epoch, validation_data, validation_steps, mode, kwargs)\u001b[0m\n\u001b[1;32m    327\u001b[0m   if (val_gen and not isinstance(validation_data, data_utils.Sequence) and\n\u001b[1;32m    328\u001b[0m       not validation_steps):\n\u001b[0;32m--> 329\u001b[0;31m     \u001b[0;32mraise\u001b[0m \u001b[0mValueError\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m'Please specify the `validation_steps` argument.'\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    330\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    331\u001b[0m   \u001b[0;32mif\u001b[0m \u001b[0many\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mk\u001b[0m \u001b[0;34m!=\u001b[0m \u001b[0;34m'steps'\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mk\u001b[0m \u001b[0;32min\u001b[0m \u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mValueError\u001b[0m: Please specify the `validation_steps` argument."
+          ]
+        }
+      ]
+    }
+  ]
+}
