@@ -1,0 +1,294 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "name": "Untitled4.ipynb",
+      "version": "0.3.2",
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "accelerator": "GPU"
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/tmggboss78/handson-ml/blob/master/%EC%BC%80%EB%9D%BC%EC%8A%A4%EC%B0%BD%EC%8B%9C%EC%9E%90%202%EB%8B%A8%EC%9B%90\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "ec8zJXzBIGEn",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 70
+        },
+        "outputId": "7bde1690-a3e8-4bfc-9c73-2df8897fa892"
+      },
+      "source": [
+        "from keras.datasets import mnist\n",
+        "(train_images, train_labels), (test_images, test_labels) = mnist.load_data()"
+      ],
+      "execution_count": 1,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "text": [
+            "Using TensorFlow backend.\n"
+          ],
+          "name": "stderr"
+        },
+        {
+          "output_type": "stream",
+          "text": [
+            "Downloading data from https://s3.amazonaws.com/img-datasets/mnist.npz\n",
+            "11493376/11490434 [==============================] - 1s 0us/step\n"
+          ],
+          "name": "stdout"
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "in3_eOdkIR-u",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "56cdfe2b-e2b2-43a0-b3d3-e84c85137144"
+      },
+      "source": [
+        "train_images.shape"
+      ],
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "(60000, 28, 28)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 2
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "LoEBmsjVI0c-",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "459e57a8-c4d4-4d6d-90ea-8a1533ff7b3d"
+      },
+      "source": [
+        "len(train_labels) #len은 길이를 구하는 함수"
+      ],
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "60000"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 3
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "YpPELbvPI2nQ",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 34
+        },
+        "outputId": "bf19c126-1457-4969-ea15-8cfd2140d2bb"
+      },
+      "source": [
+        "train_labels"
+      ],
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "array([5, 0, 4, ..., 5, 6, 8], dtype=uint8)"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          },
+          "execution_count": 4
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "huiaGIWm9y4-",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "train_images = train_images.reshape((60000, 28*28)) \n",
+        "train_images = train_images.astype('float32')/255\n",
+        "test_images = test_images.reshape((10000, 28*28))\n",
+        "test_images = test_images.astype('float32')/255"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "nNtyyplOI_ML",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "from keras import models, layers\n",
+        "network = models.Sequential()\n",
+        "network.add(layers.Dense(512, activation='relu', input_shape=(28 * 28,)))\n",
+        "network.add(layers.Dense(10, activation='softmax'))"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "d6pdEEmSJmjI",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        "network.compile(optimizer='rmsprop',\n",
+        "               loss='categorical_crossentropy',\n",
+        "               metrics=['accuracy'])"
+      ],
+      "execution_count": 0,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab_type": "code",
+        "outputId": "6658a81a-4a95-4794-da2d-a6bb6f400d59",
+        "id": "58XIotnz_I7R",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 620
+        }
+      },
+      "source": [
+        "digit = train_images[59999]\n",
+        "\n",
+        "import matplotlib.pyplot as plt\n",
+        "plt.imshow(digit, cmap=plt.cm.binary)\n",
+        "plt.show"
+      ],
+      "execution_count": 0,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "TypeError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mTypeError\u001b[0m                                 Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-17-1d2ca2632a80>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      3\u001b[0m \u001b[0;32mimport\u001b[0m \u001b[0mmatplotlib\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mpyplot\u001b[0m \u001b[0;32mas\u001b[0m \u001b[0mplt\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 4\u001b[0;31m \u001b[0mplt\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mimshow\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mdigit\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mcmap\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mplt\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mcm\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mbinary\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      5\u001b[0m \u001b[0mplt\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mshow\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/matplotlib/pyplot.py\u001b[0m in \u001b[0;36mimshow\u001b[0;34m(X, cmap, norm, aspect, interpolation, alpha, vmin, vmax, origin, extent, shape, filternorm, filterrad, imlim, resample, url, data, **kwargs)\u001b[0m\n\u001b[1;32m   2697\u001b[0m         \u001b[0mfilternorm\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mfilternorm\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mfilterrad\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mfilterrad\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mimlim\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mimlim\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   2698\u001b[0m         resample=resample, url=url, **({\"data\": data} if data is not\n\u001b[0;32m-> 2699\u001b[0;31m         None else {}), **kwargs)\n\u001b[0m\u001b[1;32m   2700\u001b[0m     \u001b[0msci\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0m__ret\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   2701\u001b[0m     \u001b[0;32mreturn\u001b[0m \u001b[0m__ret\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/matplotlib/__init__.py\u001b[0m in \u001b[0;36minner\u001b[0;34m(ax, data, *args, **kwargs)\u001b[0m\n\u001b[1;32m   1808\u001b[0m                         \u001b[0;34m\"the Matplotlib list!)\"\u001b[0m \u001b[0;34m%\u001b[0m \u001b[0;34m(\u001b[0m\u001b[0mlabel_namer\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mfunc\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m__name__\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1809\u001b[0m                         RuntimeWarning, stacklevel=2)\n\u001b[0;32m-> 1810\u001b[0;31m             \u001b[0;32mreturn\u001b[0m \u001b[0mfunc\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0max\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m*\u001b[0m\u001b[0margs\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0;34m**\u001b[0m\u001b[0mkwargs\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   1811\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   1812\u001b[0m         inner.__doc__ = _add_data_doc(inner.__doc__,\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/matplotlib/axes/_axes.py\u001b[0m in \u001b[0;36mimshow\u001b[0;34m(self, X, cmap, norm, aspect, interpolation, alpha, vmin, vmax, origin, extent, shape, filternorm, filterrad, imlim, resample, url, **kwargs)\u001b[0m\n\u001b[1;32m   5492\u001b[0m                               resample=resample, **kwargs)\n\u001b[1;32m   5493\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m-> 5494\u001b[0;31m         \u001b[0mim\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mset_data\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mX\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m   5495\u001b[0m         \u001b[0mim\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mset_alpha\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0malpha\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m   5496\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mim\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mget_clip_path\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;32mis\u001b[0m \u001b[0;32mNone\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/matplotlib/image.py\u001b[0m in \u001b[0;36mset_data\u001b[0;34m(self, A)\u001b[0m\n\u001b[1;32m    636\u001b[0m         if not (self._A.ndim == 2\n\u001b[1;32m    637\u001b[0m                 or self._A.ndim == 3 and self._A.shape[-1] in [3, 4]):\n\u001b[0;32m--> 638\u001b[0;31m             \u001b[0;32mraise\u001b[0m \u001b[0mTypeError\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m\"Invalid dimensions for image data\"\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m    639\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    640\u001b[0m         \u001b[0;32mif\u001b[0m \u001b[0mself\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0m_A\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mndim\u001b[0m \u001b[0;34m==\u001b[0m \u001b[0;36m3\u001b[0m\u001b[0;34m:\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mTypeError\u001b[0m: Invalid dimensions for image data"
+          ]
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAAQYAAAD8CAYAAACVSwr3AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz\nAAALEgAACxIB0t1+/AAAADl0RVh0U29mdHdhcmUAbWF0cGxvdGxpYiB2ZXJzaW9uIDMuMC4zLCBo\ndHRwOi8vbWF0cGxvdGxpYi5vcmcvnQurowAADGxJREFUeJzt23GIpHd9x/H3x1xTaRq1mBXk7jSR\nXhqvtpB0SVOEmmJaLinc/WGROwhtSsihNVJQCimWVOJfVmpBuNZeqUQFjad/lAVPArWRgHgxGxJj\n7kJkPW1zUZozpv4jGkO//WMm7WS/u5knd7Mzt/X9goV5nvntzHeH4X3PPPNcqgpJmvSKRQ8g6cJj\nGCQ1hkFSYxgkNYZBUmMYJDVTw5DkE0meTvLYJvcnyceSrCV5NMk1sx9T0jwNOWK4G9j3EvffCOwZ\n/xwG/uH8x5K0SFPDUFX3Az98iSUHgE/VyAngNUleP6sBJc3fjhk8xk7gyYntM+N931+/MMlhRkcV\nXHLJJb911VVXzeDpJW3moYce+kFVLb3c35tFGAarqqPAUYDl5eVaXV2d59NLP3eS/Pu5/N4svpV4\nCtg9sb1rvE/SNjWLMKwAfzz+duI64EdV1T5GSNo+pn6USPJZ4HrgsiRngL8GfgGgqj4OHAduAtaA\nHwN/ulXDSpqPqWGoqkNT7i/gPTObSNLCeeWjpMYwSGoMg6TGMEhqDIOkxjBIagyDpMYwSGoMg6TG\nMEhqDIOkxjBIagyDpMYwSGoMg6TGMEhqDIOkxjBIagyDpMYwSGoMg6TGMEhqDIOkxjBIagyDpMYw\nSGoMg6TGMEhqDIOkxjBIagyDpMYwSGoMg6TGMEhqDIOkZlAYkuxL8kSStSR3bHD/G5Lcl+ThJI8m\nuWn2o0qal6lhSHIRcAS4EdgLHEqyd92yvwKOVdXVwEHg72c9qKT5GXLEcC2wVlWnq+o54B7gwLo1\nBbxqfPvVwPdmN6KkeRsShp3AkxPbZ8b7Jn0QuDnJGeA48N6NHijJ4SSrSVbPnj17DuNKmodZnXw8\nBNxdVbuAm4BPJ2mPXVVHq2q5qpaXlpZm9NSSZm1IGJ4Cdk9s7xrvm3QrcAygqr4GvBK4bBYDSpq/\nIWF4ENiT5IokFzM6ubiybs1/AG8HSPJmRmHws4K0TU0NQ1U9D9wO3As8zujbh5NJ7kqyf7zs/cBt\nSb4BfBa4papqq4aWtLV2DFlUVccZnVSc3HfnxO1TwFtnO5qkRfHKR0mNYZDUGAZJjWGQ1BgGSY1h\nkNQYBkmNYZDUGAZJjWGQ1BgGSY1hkNQYBkmNYZDUGAZJjWGQ1BgGSY1hkNQYBkmNYZDUGAZJjWGQ\n1BgGSY1hkNQYBkmNYZDUGAZJjWGQ1BgGSY1hkNQYBkmNYZDUGAZJjWGQ1AwKQ5J9SZ5Ispbkjk3W\nvDPJqSQnk3xmtmNKmqcd0xYkuQg4Avw+cAZ4MMlKVZ2aWLMH+EvgrVX1bJLXbdXAkrbekCOGa4G1\nqjpdVc8B9wAH1q25DThSVc8CVNXTsx1T0jwNCcNO4MmJ7TPjfZOuBK5M8tUkJ5Ls2+iBkhxOsppk\n9ezZs+c2saQtN6uTjzuAPcD1wCHgn5K8Zv2iqjpaVctVtby0tDSjp5Y0a0PC8BSwe2J713jfpDPA\nSlX9rKq+A3yLUSgkbUNDwvAgsCfJFUkuBg4CK+vW/AujowWSXMboo8XpGc4paY6mhqGqngduB+4F\nHgeOVdXJJHcl2T9edi/wTJJTwH3AX1TVM1s1tKStlapayBMvLy/X6urqQp5b+nmR5KGqWn65v+eV\nj5IawyCpMQySGsMgqTEMkhrDIKkxDJIawyCpMQySGsMgqTEMkhrDIKkxDJIawyCpMQySGsMgqTEM\nkhrDIKkxDJIawyCpMQySGsMgqTEMkhrDIKkxDJIawyCpMQySGsMgqTEMkhrDIKkxDJIawyCpMQyS\nGsMgqTEMkppBYUiyL8kTSdaS3PES696RpJIsz25ESfM2NQxJLgKOADcCe4FDSfZusO5S4M+BB2Y9\npKT5GnLEcC2wVlWnq+o54B7gwAbrPgR8GPjJDOeTtABDwrATeHJi+8x43/9Kcg2wu6q++FIPlORw\nktUkq2fPnn3Zw0qaj/M++ZjkFcBHgfdPW1tVR6tquaqWl5aWzvepJW2RIWF4Ctg9sb1rvO8FlwJv\nAb6S5LvAdcCKJyCl7WtIGB4E9iS5IsnFwEFg5YU7q+pHVXVZVV1eVZcDJ4D9VbW6JRNL2nJTw1BV\nzwO3A/cCjwPHqupkkruS7N/qASXN344hi6rqOHB83b47N1l7/fmPJWmRvPJRUmMYJDWGQVJjGCQ1\nhkFSYxgkNYZBUmMYJDWGQVJjGCQ1hkFSYxgkNYZBUmMYJDWGQVJjGCQ1hkFSYxgkNYZBUmMYJDWG\nQVJjGCQ1hkFSYxgkNYZBUmMYJDWGQVJjGCQ1hkFSYxgkNYZBUmMYJDWGQVJjGCQ1g8KQZF+SJ5Ks\nJbljg/vfl+RUkkeTfDnJG2c/qqR5mRqGJBcBR4Abgb3AoSR71y17GFiuqt8EvgD8zawHlTQ/Q44Y\nrgXWqup0VT0H3AMcmFxQVfdV1Y/HmyeAXbMdU9I8DQnDTuDJie0z432buRX40kZ3JDmcZDXJ6tmz\nZ4dPKWmuZnryMcnNwDLwkY3ur6qjVbVcVctLS0uzfGpJM7RjwJqngN0T27vG+14kyQ3AB4C3VdVP\nZzOepEUYcsTwILAnyRVJLgYOAiuTC5JcDfwjsL+qnp79mJLmaWoYqup54HbgXuBx4FhVnUxyV5L9\n42UfAX4Z+HySR5KsbPJwkraBIR8lqKrjwPF1++6cuH3DjOeStEBe+SipMQySGsMgqTEMkhrDIKkx\nDJIawyCpMQySGsMgqTEMkhrDIKkxDJIawyCpMQySGsMgqTEMkhrDIKkxDJIawyCpMQySGsMgqTEM\nkhrDIKkxDJIawyCpMQySGsMgqTEMkhrDIKkxDJIawyCpMQySGsMgqTEMkhrDIKkZFIYk+5I8kWQt\nyR0b3P+LST43vv+BJJfPelBJ8zM1DEkuAo4ANwJ7gUNJ9q5bdivwbFX9KvB3wIdnPaik+RlyxHAt\nsFZVp6vqOeAe4MC6NQeAT45vfwF4e5LMbkxJ87RjwJqdwJMT22eA395sTVU9n+RHwGuBH0wuSnIY\nODze/GmSx85l6AW5jHV/zwVsO80K22ve7TQrwK+dyy8NCcPMVNVR4ChAktWqWp7n85+P7TTvdpoV\ntte822lWGM17Lr835KPEU8Duie1d430brkmyA3g18My5DCRp8YaE4UFgT5IrklwMHARW1q1ZAf5k\nfPuPgH+rqprdmJLmaepHifE5g9uBe4GLgE9U1ckkdwGrVbUC/DPw6SRrwA8ZxWOao+cx9yJsp3m3\n06ywvebdTrPCOc4b/2GXtJ5XPkpqDIOkZsvDsJ0upx4w6/uSnEryaJIvJ3njIuacmOcl551Y944k\nlWRhX7MNmTXJO8ev78kkn5n3jOtmmfZeeEOS+5I8PH4/3LSIOcezfCLJ05tdF5SRj43/lkeTXDP1\nQatqy34Ynaz8NvAm4GLgG8DedWv+DPj4+PZB4HNbOdN5zvp7wC+Nb797UbMOnXe87lLgfuAEsHyh\nzgrsAR4GfmW8/boL+bVldFLv3ePbe4HvLnDe3wWuAR7b5P6bgC8BAa4DHpj2mFt9xLCdLqeeOmtV\n3VdVPx5vnmB0TceiDHltAT7E6P+u/GSew60zZNbbgCNV9SxAVT095xknDZm3gFeNb78a+N4c53vx\nIFX3M/o2cDMHgE/VyAngNUle/1KPudVh2Ohy6p2bramq54EXLqeetyGzTrqVUYUXZeq840PG3VX1\nxXkOtoEhr+2VwJVJvprkRJJ9c5uuGzLvB4Gbk5wBjgPvnc9o5+Tlvrfne0n0/xdJbgaWgbctepbN\nJHkF8FHglgWPMtQORh8nrmd0JHZ/kt+oqv9a6FSbOwTcXVV/m+R3GF3H85aq+u9FDzYLW33EsJ0u\npx4yK0luAD4A7K+qn85pto1Mm/dS4C3AV5J8l9Fny5UFnYAc8tqeAVaq6mdV9R3gW4xCsQhD5r0V\nOAZQVV8DXsnoP1hdiAa9t19ki0+K7ABOA1fwfydxfn3dmvfw4pOPxxZ0AmfIrFczOim1ZxEzvtx5\n163/Cos7+Tjktd0HfHJ8+zJGh76vvYDn/RJwy/j2mxmdY8gC3w+Xs/nJxz/kxScfvz718eYw8E2M\n6v9t4APjfXcx+hcXRqX9PLAGfB140wJf3Gmz/ivwn8Aj45+VRc06ZN51axcWhoGvbRh99DkFfBM4\neCG/toy+ifjqOBqPAH+wwFk/C3wf+BmjI69bgXcB75p4bY+M/5ZvDnkfeEm0pMYrHyU1hkFSYxgk\nNYZBUmMYJDWGQVJjGCQ1/wMKpFHVdp3xCwAAAABJRU5ErkJggg==\n",
+            "text/plain": [
+              "<Figure size 432x288 with 1 Axes>"
+            ]
+          },
+          "metadata": {
+            "tags": []
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "dbRyOyRNLvak",
+        "colab_type": "code",
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 336
+        },
+        "outputId": "0d2c5e11-acb3-430d-cd19-d1b291aaf2b0"
+      },
+      "source": [
+        "  network.fit(train_images, train_labels, epochs=5, batch_size=128)"
+      ],
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "error",
+          "ename": "ValueError",
+          "evalue": "ignored",
+          "traceback": [
+            "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+            "\u001b[0;31mValueError\u001b[0m                                Traceback (most recent call last)",
+            "\u001b[0;32m<ipython-input-19-8b04f355273b>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m()\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0mnetwork\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mfit\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mtrain_images\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mtrain_labels\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mepochs\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;36m5\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mbatch_size\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;36m128\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/keras/engine/training.py\u001b[0m in \u001b[0;36mfit\u001b[0;34m(self, x, y, batch_size, epochs, verbose, callbacks, validation_split, validation_data, shuffle, class_weight, sample_weight, initial_epoch, steps_per_epoch, validation_steps, **kwargs)\u001b[0m\n\u001b[1;32m    950\u001b[0m             \u001b[0msample_weight\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0msample_weight\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    951\u001b[0m             \u001b[0mclass_weight\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0mclass_weight\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 952\u001b[0;31m             batch_size=batch_size)\n\u001b[0m\u001b[1;32m    953\u001b[0m         \u001b[0;31m# Prepare validation data.\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    954\u001b[0m         \u001b[0mdo_validation\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;32mFalse\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/keras/engine/training.py\u001b[0m in \u001b[0;36m_standardize_user_data\u001b[0;34m(self, x, y, sample_weight, class_weight, check_array_lengths, batch_size)\u001b[0m\n\u001b[1;32m    787\u001b[0m                 \u001b[0mfeed_output_shapes\u001b[0m\u001b[0;34m,\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    788\u001b[0m                 \u001b[0mcheck_batch_axis\u001b[0m\u001b[0;34m=\u001b[0m\u001b[0;32mFalse\u001b[0m\u001b[0;34m,\u001b[0m  \u001b[0;31m# Don't enforce the batch size.\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 789\u001b[0;31m                 exception_prefix='target')\n\u001b[0m\u001b[1;32m    790\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    791\u001b[0m             \u001b[0;31m# Generate sample-wise weight values given the `sample_weight` and\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;32m/usr/local/lib/python3.6/dist-packages/keras/engine/training_utils.py\u001b[0m in \u001b[0;36mstandardize_input_data\u001b[0;34m(data, names, shapes, check_batch_axis, exception_prefix)\u001b[0m\n\u001b[1;32m    136\u001b[0m                             \u001b[0;34m': expected '\u001b[0m \u001b[0;34m+\u001b[0m \u001b[0mnames\u001b[0m\u001b[0;34m[\u001b[0m\u001b[0mi\u001b[0m\u001b[0;34m]\u001b[0m \u001b[0;34m+\u001b[0m \u001b[0;34m' to have shape '\u001b[0m \u001b[0;34m+\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    137\u001b[0m                             \u001b[0mstr\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mshape\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;34m+\u001b[0m \u001b[0;34m' but got array with shape '\u001b[0m \u001b[0;34m+\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m--> 138\u001b[0;31m                             str(data_shape))\n\u001b[0m\u001b[1;32m    139\u001b[0m     \u001b[0;32mreturn\u001b[0m \u001b[0mdata\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m    140\u001b[0m \u001b[0;34m\u001b[0m\u001b[0m\n",
+            "\u001b[0;31mValueError\u001b[0m: Error when checking target: expected dense_6 to have shape (10,) but got array with shape (1,)"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "id": "b1zxfF2E9f0p",
+        "colab_type": "code",
+        "colab": {}
+      },
+      "source": [
+        ""
+      ],
+      "execution_count": 0,
+      "outputs": []
+    }
+  ]
+}
